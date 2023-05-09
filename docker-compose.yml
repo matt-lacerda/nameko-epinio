@@ -103,7 +103,7 @@ services:
       rabbit:
         condition: service_healthy
     ports:
-        - "8003:8000"
+        - "8000:8000"
     links:
         - "rabbit:nameko-example-rabbitmq"
     environment:
