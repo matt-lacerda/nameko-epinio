@@ -12,6 +12,8 @@ setup(
         'alembic==1.0.10',
         'marshmallow==2.19.2',
         'psycopg2-binary==2.8.2',
+        'importlib-metadata==4.13.0',
+        'sqlalchemy==1.4.46',
     ],
     extras_require={
         'dev': [
