@@ -11,9 +11,12 @@ kind-create-cluster:
 		kubectl config set-cluster $(CONTEXT) --server=$${NEWURL} --insecure-skip-tls-verify=true 
 
 # src: https://kind.sigs.k8s.io/docs/user/ingress/
+
 kind-setup-ingress:
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
-	sleep 5
+
+#STEPCONF 5 - Increase the time and wait for the ingress creation to be completed
+	sleep 30
 	kubectl wait --namespace ingress-nginx \
 		--for=condition=ready pod \
 		--selector=app.kubernetes.io/component=controller \
@@ -24,7 +27,8 @@ undeployK8:
 	kind delete cluster --name $(NAMESPACE)
 
 deployK8: kind-create-cluster kind-setup-ingress
-	# $(MAKE) init-helm
+#STEPCONF 6 - uncomment this line to install the stable repo for helm
+	$(MAKE) init-helm
 	$(MAKE) create-namespace
 	$(MAKE) deploy-dependencies
 	$(MAKE) install-charts
