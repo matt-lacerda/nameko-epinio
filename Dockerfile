@@ -1,4 +1,6 @@
-FROM python:3.7-slim-stretch as base
+FROM python@sha256:0768338d30b7195d518fe1ae22a75e0ed0947ceffd96699142cde8313d4e94ec as base
+# CONFSTEP 1 - Change image to python:3.7-slim-bullseye because debian stretch (9) has reached EOF
+# If debian 9 is strictly necessary, must change sources list to archive repos.
 
 RUN apt-get update && \
     apt-get install --yes curl netcat
