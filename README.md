@@ -53,6 +53,7 @@ Note: All the modified code is committed to this repo
 
 ### 1 - Create necessary services and configurations
   Installed epinio binary for ubuntu
+  
   Pin image inside kind-config.yaml to the epinio recommend version for the cluster server (image: kindest/node:v1.22.7) [commit](https://github.com/matt-lacerda/nameko-epinio/commit/98df469690320b8423c664ddaec7f2cc86687688)
 
   Create new make commands for deploying the app with epinio - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/c77f9d3362c9708679bd1ff1395bb80fedafeecc)
