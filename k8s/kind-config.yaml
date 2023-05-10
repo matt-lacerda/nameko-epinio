@@ -5,6 +5,7 @@ networking:
 # src: https://kind.sigs.k8s.io/docs/user/ingress/
 nodes:
 - role: control-plane
+  image: kindest/node:v1.22.7
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
