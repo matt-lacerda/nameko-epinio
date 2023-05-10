@@ -52,9 +52,9 @@ Note: All the modified code is committed to this repo
   
   Followed the steps on https://github.com/gitricko/nameko-devex/blob/master/k8s/README.md
 
-	Increased the sleep time from 5s to 30s in the make file. That allowed enough time for the nginx ingress to fully start before the next steps - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/e33e5f774c00179172583c021d1610b6c9acd0b9)
+  Increased the sleep time from 5s to 30s in the make file. That allowed enough time for the nginx ingress to fully start before the next steps - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/e33e5f774c00179172583c021d1610b6c9acd0b9)
 
-	Uncommented $(MAKE) init-helm in the make file. This added the stable repo for helm, which is necessary since it does not come with a default repository after fresh installation. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/e33e5f774c00179172583c021d1610b6c9acd0b9)
+  Uncommented $(MAKE) init-helm in the make file. This added the stable repo for helm, which is necessary since it does not come with a default repository after fresh installation. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/e33e5f774c00179172583c021d1610b6c9acd0b9)
 
 ### 2 - make smoke-test
 	Succeeded
@@ -70,6 +70,7 @@ Note: All the modified code is committed to this repo
   Pin image inside kind-config.yaml to the epinio recommend version for the cluster server (image: kindest/node:v1.22.7) [commit](https://github.com/matt-lacerda/nameko-epinio/commit/98df469690320b8423c664ddaec7f2cc86687688)
 
   Create new make commands for deploying the app with epinio - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/c77f9d3362c9708679bd1ff1395bb80fedafeecc)
+
   Added curl -k (--insecure) tag for the curl tests to avoid failing because of certificates - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/99ea2bf693e77f281958f613755843dec9109043)
 
 ### 2 - make epinio-smoke-test
