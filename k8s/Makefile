@@ -2,6 +2,83 @@ HOST ?= localhost
 NAMESPACE ?= nameko
 CONTEXT ?= kind-$(NAMESPACE)
 TAG ?= dev
+LOCAL_DNS ?= 127.0.0.1.sslip.io
+SERVICE_DEPENDENCIES := postgresql redis rabbitmq
+IMAGES := orders products gateway
+
+# epinio
+deploy-epinio: kind-create-cluster kind-setup-ingress kind-setup-cert-manager
+	helm repo add epinio https://epinio.github.io/helm-charts
+	helm install epinio -n epinio --create-namespace epinio/epinio --set global.domain=$(LOCAL_DNS)
+	epinio login -u admin https://epinio.$(LOCAL_DNS)
+	$(MAKE) push-epinio-nameko-images
+
+kind-setup-cert-manager:
+	kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
+	sleep 20
+	kubectl wait --namespace cert-manager \
+    --for=condition=available deployment/cert-manager \
+    --timeout=300s
+
+create-epinio-service-dependencies:
+	for service_name in $(SERVICE_DEPENDENCIES); do epinio service create $$service_name-dev $(NAMESPACE)-$$service_name; done
+	$(MAKE) bind-epinio-services
+
+push-epinio-nameko-images: load-nameko-docker-images
+	for image in $(IMAGES); do epinio push -n $$image --container-image-url $(NAMESPACE)/nameko-example-$$image:$(TAG) --chart-value appListeningPort=8000; done
+	$(MAKE) create-epinio-service-dependencies
+	
+load-nameko-docker-images:
+	cd ..; $(MAKE) build
+	kind load docker-image $(NAMESPACE)/nameko-example-gateway:$(TAG) --name $(NAMESPACE)
+	kind load docker-image $(NAMESPACE)/nameko-example-orders:$(TAG) --name $(NAMESPACE)
+	kind load docker-image $(NAMESPACE)/nameko-example-products:$(TAG) --name $(NAMESPACE)
+
+bind-epinio-services:
+	for image in $(IMAGES); do \
+		for service in $(SERVICE_DEPENDENCIES); do \
+			epinio service bind nameko-$$service $$image; \
+		done; \
+	done
+	$(MAKE) epinio-set-app-variables
+
+epinio-set-app-variables:
+	$(MAKE) epinio-bind-rabbitmq-vars
+	$(MAKE) epinio-bind-redis-vars
+	$(MAKE) epinio-bind-postgres-vars
+
+epinio-bind-rabbitmq-vars:
+	for app in $(IMAGES); do \
+		epinio app env set $$app RABBIT_PASSWORD \
+			$$(kubectl get secret $$(kubectl get secrets -n workspace -o jsonpath='{range .items[?(@.data.rabbitmq-password)]}{.metadata.name}{"\n"}{end}' | grep rabbitmq) -n workspace -o jsonpath='{.data.rabbitmq-password}' | base64 --decode); \
+		epinio app env set $$app RABBIT_HOST $$(kubectl get svc -n workspace | grep rabbit | grep -v headless | awk '{print $$1}').workspace.svc.cluster.local; \
+		epinio app env set $$app RABBIT_PORT 5672; \
+		epinio app env set $$app RABBIT_USER user; \
+		epinio app env set $$app RABBIT_MANAGEMENT_PORT 15672; \
+	done
+
+epinio-bind-redis-vars:
+	epinio app env set products REDIS_PASSWORD \
+		$$(kubectl get secret $$(kubectl get secrets -n workspace -o jsonpath='{range .items[?(@.data.redis-password)]}{.metadata.name}{"\n"}{end}' | grep redis) -n workspace -o jsonpath='{.data.redis-password}' | base64 --decode); \
+	epinio app env set products REDIS_HOST \
+		$$(kubectl get svc -n workspace | grep redis-master | awk '{print $$1}').workspace.svc.cluster.local; \
+	epinio app env set products REDIS_PORT 6379
+	epinio app env set products REDIS_INDEX 11
+
+epinio-bind-postgres-vars:
+	epinio app env set orders DB_HOST \
+		$$(kubectl get svc -n workspace | grep postgres | grep -v postgresql-hl | awk '{print $$1}').workspace.svc.cluster.local; \
+	epinio app env set orders DB_PASSWORD $() \
+		$$(kubectl get secret $$(kubectl get secrets -n workspace -o jsonpath='{range .items[?(@.data.postgres-password)]}{.metadata.name}{"\n"}{end}' | grep postgres) -n workspace -o jsonpath='{.data.postgres-password}' | base64 --decode); \
+	epinio app env set orders DB_USER postgres
+	epinio app env set orders DB_NAME postgres
+
+check-epinio-logs:
+	kubectl -n epinio get events --sort-by='{.lastTimestamp}'
+
+# test epinio
+epinio-smoke-test:
+	../test/nex-smoketest.sh https://gateway.$(LOCAL_DNS)
 
 # all in one
 kind-create-cluster:
@@ -15,7 +92,7 @@ kind-create-cluster:
 kind-setup-ingress:
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
-#STEPCONF 5 - Increase the time and wait for the ingress creation to be completed
+#STEPCONF - Increase the time and wait for the ingress creation to be completed
 	sleep 30
 	kubectl wait --namespace ingress-nginx \
 		--for=condition=ready pod \
@@ -27,7 +104,7 @@ undeployK8:
 	kind delete cluster --name $(NAMESPACE)
 
 deployK8: kind-create-cluster kind-setup-ingress
-#STEPCONF 6 - uncomment this line to install the stable repo for helm
+#STEPCONF - uncomment this line to install the stable repo for helm
 	$(MAKE) init-helm
 	$(MAKE) create-namespace
 	$(MAKE) deploy-dependencies
