@@ -80,6 +80,9 @@ check-epinio-logs:
 epinio-smoke-test:
 	../test/nex-smoketest.sh https://gateway.$(LOCAL_DNS)
 
+epinio-perf-test:
+	cd ..; ./test/nex-bzt.sh https://gateway.$(LOCAL_DNS)
+
 # all in one
 kind-create-cluster:
 	kind create cluster --config kind-config.yaml --name $(NAMESPACE)
