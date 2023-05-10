@@ -40,7 +40,9 @@ Note: All the modified code is committed to this repo
 
 ### 1 - cd k8s; make deployK8
   Followed the steps on https://github.com/gitricko/nameko-devex/blob/master/k8s/README.md
+
 	Increased the sleep time from 5s to 30s in the make file. That allowed enough time for the nginx ingress to fully start before the next steps - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/e33e5f774c00179172583c021d1610b6c9acd0b9)
+  
 	Uncommented $(MAKE) init-helm in the make file. This added the stable repo for helm, which is necessary since it does not come with a default repository after fresh installation. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/e33e5f774c00179172583c021d1610b6c9acd0b9)
 
 ### 2 - make smoke-test
