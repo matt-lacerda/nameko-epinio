@@ -5,16 +5,24 @@
 Note: All the modified code is committed to this repo
 
 ### 1 - Config the environment
-	activate windows wsl and install ubuntu
-	install all the necessary apps like docker, docker-compose, jq, conda, helm, kind...
-	clone the nameko-devex repo
+	
+  Activate windows wsl and install ubuntu
+	
+  Install all the necessary apps like docker, docker-compose, jq, conda, helm, kind...
+	
+  Clone the nameko-devex repo
 
 ### 2 - Run necessary services 
-	Start rabbitmq, postgres and redis
+	
+  Start rabbitmq, postgres and redis
+
 	Changed the image of the main Dockerfile. Debian 9 (python:3.7-slim-stretch) is no longer maintained, and its security packages have been archived. This prevented the build process from continuing due to an error while updating the packages. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/a0be95bb7da9cef5982fa07f05093168327afb78)
-	Added importlib-metadata and sqlalchemy with the correct pinned versions inside setup.py for orders, products and gateway services. This was necessary to avoid crashing the build process for the docker images. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/6d70776e5e673991d88aa4c154da6aa63aa70c06)
+	
+  Added importlib-metadata and sqlalchemy with the correct pinned versions inside setup.py for orders, products and gateway services. This was necessary to avoid crashing the build process for the docker images. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/6d70776e5e673991d88aa4c154da6aa63aa70c06)
+  
   Start redis, postgres and rabbitmq using ./dev_run_backingsvcs.sh
-	Start gateway.service orders.service products.service using ./dev_run.sh gateway.service orders.service products.service
+	
+  Start gateway.service orders.service products.service using ./dev_run.sh gateway.service orders.service products.service
 
 ### 3 - ./test/nex-smoketest.sh local 
 	Succeeded
@@ -26,8 +34,10 @@ Note: All the modified code is committed to this repo
 ## STEPS TO RUN NAMEKO WITH DOCKER (COMPOSE)
 
 ### 1 - Run the necessary services
-	Fix the gateway service port in the docker-compose file to be 8000 instead of 8003. This is the port configured to run the curl smoke tests. [commit](https://github.com/matt-lacerda/nameko-epinio/commit/d777e1075e8f0b277e7cc6acd6640febf71d8176)
-	The command make deploy-docker will run docker compoase, which in turn will start all needed services
+	
+  Fix the gateway service port in the docker-compose file to be 8000 instead of 8003. This is the port configured to run the curl smoke tests. [commit](https://github.com/matt-lacerda/nameko-epinio/commit/d777e1075e8f0b277e7cc6acd6640febf71d8176)
+	
+  The command make deploy-docker will run docker compoase, which in turn will start all needed services
 	
 ### 2 - make smoke-test
 	Succeeded
@@ -39,10 +49,11 @@ Note: All the modified code is committed to this repo
 ## STEPS TO RUN NAMEKO WITH K8S
 
 ### 1 - cd k8s; make deployK8
+  
   Followed the steps on https://github.com/gitricko/nameko-devex/blob/master/k8s/README.md
 
 	Increased the sleep time from 5s to 30s in the make file. That allowed enough time for the nginx ingress to fully start before the next steps - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/e33e5f774c00179172583c021d1610b6c9acd0b9)
-  
+
 	Uncommented $(MAKE) init-helm in the make file. This added the stable repo for helm, which is necessary since it does not come with a default repository after fresh installation. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/e33e5f774c00179172583c021d1610b6c9acd0b9)
 
 ### 2 - make smoke-test
