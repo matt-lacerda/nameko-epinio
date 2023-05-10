@@ -16,7 +16,7 @@ Note: All the modified code is committed to this repo
 	
   Start rabbitmq, postgres and redis
 
-	Changed the image of the main Dockerfile. Debian 9 (python:3.7-slim-stretch) is no longer maintained, and its security packages have been archived. This prevented the build process from continuing due to an error while updating the packages. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/a0be95bb7da9cef5982fa07f05093168327afb78)
+  Changed the image of the main Dockerfile. Debian 9 (python:3.7-slim-stretch) is no longer maintained, and its security packages have been archived. This prevented the build process from continuing due to an error while updating the packages. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/a0be95bb7da9cef5982fa07f05093168327afb78)
 	
   Added importlib-metadata and sqlalchemy with the correct pinned versions inside setup.py for orders, products and gateway services. This was necessary to avoid crashing the build process for the docker images. - [commit](https://github.com/matt-lacerda/nameko-epinio/commit/6d70776e5e673991d88aa4c154da6aa63aa70c06)
   
