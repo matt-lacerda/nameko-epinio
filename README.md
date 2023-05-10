@@ -62,6 +62,7 @@ Note: All the modified code is committed to this repo
 
 ### 3 - make epinio-perf-test
 	Succeeded
+  https://a.blazemeter.com/app/?public-token=lYx4bh3dsJu6N3UnH9uorCQAldsWap24MNjpLIAkawSw0JyyIL#/accounts/-1/workspaces/-1/projects/-1/sessions/r-ext-645baf730d382724835850/summary/summary
 
 
 # Nameko Examples
