@@ -107,6 +107,9 @@ Note: All the modified code is committed to this repo
     push the app to epinio (deploy)
     go to https://jenkins.127.0.0.1.sslip.io/ and use the master key from the terminal output
 
+    to destroy the epinio jenkins app run: make destroy
+    to destroy the whole kind cluster run: make unploy
+
 
 
 # ORIGINAL DOCS:
