@@ -80,6 +80,33 @@ Note: All the modified code is committed to this repo
 	Succeeded
   https://a.blazemeter.com/app/?public-token=lYx4bh3dsJu6N3UnH9uorCQAldsWap24MNjpLIAkawSw0JyyIL#/accounts/-1/workspaces/-1/projects/-1/sessions/r-ext-645baf730d382724835850/summary/summary
 
+## STEPS TO RUN ANOTHER APP (Jenkins) WITH EPINIO
+
+### - Create makefile to launch jenkins
+  note: it's not optimal, but I created a folder for jenkins inside this same repo just to facilitate things.
+  cd to jenkins directory
+  execute make deploy (run cluster)
+  execute make config (run jenkins on top of kind + epinio)
+  note: I used the default workspace because of a possible bug with epinio where the namespaces I created with cli didnt show on the web ui.
+  the makefile logic consists of:
+    create the kind cluster
+    setup ingress
+    setup cert manager
+    install epinio in the cluster using helm
+    login to the epinio local dns
+    
+    pull jenkins image to the local environment
+    create the jenkins app within epinio
+    load jenkins image to the k8s cluster environment
+    push the app to epinio (deploy)
+    go to https://jenkins.127.0.0.1.sslip.io/ and use the master key from the terminal output
+
+
+
+# ORIGINAL DOCS:
+
+
+
 
 # Nameko Examples
 ![Airship Ltd](airship.png)
