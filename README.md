@@ -84,11 +84,17 @@ Note: All the modified code is committed to this repo
 
 ### - Create makefile to launch jenkins
   note: it's not optimal, but I created a folder for jenkins inside this same repo just to facilitate things.
+  
   cd to jenkins directory
+  
   execute make deploy (run cluster)
+  
   execute make config (run jenkins on top of kind + epinio)
+  
   note: I used the default workspace because of a possible bug with epinio where the namespaces I created with cli didnt show on the web ui.
+  
   the makefile logic consists of:
+    
     create the kind cluster
     setup ingress
     setup cert manager
